@@ -1,0 +1,39 @@
+package com.friendlyarm.FriendlyThings;
+
+import android.util.Log;
+
+import java.io.FileDescriptor;
+
+public class HardwareController {
+
+
+    /* GPIO */
+    static public native int setGPIOValue(int pin, int value);
+    static public native int getGPIOValue(int pin);
+
+    /* SPI */
+//    static public native int setSPIWriteBitsPerWord( int spi_fd, int bits );
+//    static public native int setSPIReadBitsPerWord( int spi_fd, int bits );
+//    static public native int setSPIBitOrder( int spi_fd, int order);
+//    static public native int setSPIClockDivider( int spi_fd, int divider);
+//    static public native int setSPIMaxSpeed( int spi_fd, int spi_speed);
+//    static public native int setSPIDataMode( int spi_fd, int mode);
+//    static public native int SPItransferOneByte( int spi_fd, byte byteData, int spi_delay, int spi_speed, int spi_bits);
+//    static public native int SPItransferBytes(int spi_fd, byte[] writeData, byte[] readBuff, int spi_delay, int spi_speed, int spi_bits);
+//    static public native int writeBytesToSPI(int spi_fd, byte[] writeData, int spi_delay, int spi_speed, int spi_bits);
+//    static public native int readBytesFromSPI(int spi_fd, byte[] readBuff, int spi_delay, int spi_speed, int spi_bits);
+
+    /* Serial Port */
+    static native FileDescriptor open(int devNo, int baudrate, int flags);
+    static native void close();
+    static native int setTxMode(int pin);
+    static native int setRxMode(int pin);
+
+    static {
+        try {
+            System.loadLibrary("friendlyarm-things");
+        } catch (UnsatisfiedLinkError e) {
+            Log.d("HardwareControler", "libfriendlyarm-things library not found!");
+        }
+    }
+}
