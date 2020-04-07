@@ -8,6 +8,8 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
@@ -27,23 +29,39 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private static final String TAG = "RS485 Test";
     protected static final FileDescriptor NULL = null;
 
-    private Serial FingerModule = new Serial();
+    private Serial serialPort0 = new Serial();
+    private Serial serialPort1 = new Serial();
 
-    private FileDescriptor mFd = null;
-    private FileInputStream mFileInputStream;
-    private FileOutputStream mFileOutputStream;
+    private FileDescriptor mFd0 = null;
+    private FileInputStream mFileInputStream0;
+    private FileOutputStream mFileOutputStream0;
 
+    private FileDescriptor mFd1 = null;
+    private FileInputStream mFileInputStream1;
+    private FileOutputStream mFileOutputStream1;
 
     //serial sending thread
-    private SendingThread mSendingThread;
+    private SendingThread0 mSendingThread0;
+    private SendingThread1 mSendingThread1;
     //serial receiving thread
-    private ReadingThread mReadingThread;
+    private ReadingThread0 mReadingThread0;
+    private ReadingThread1 mReadingThread1;
     //sending문자열
-    private byte[] mWBuffer;
-    private byte[] mRBuffer;
+    private byte[] mWBuffer0;
+    private byte[] mRBuffer0;
+    private byte[] mWBuffer1;
+    private byte[] mRBuffer1;
 
-    private EditText mReception;
-    private EditText mSendText;
+    private TextView mReception0;
+    private EditText mSendText0;
+    private TextView mReception1;
+    private EditText mSendText1;
+
+
+    private Button mBtOpen;
+    private Button mBtClose;
+    private Button mBtSend0;
+    private Button mBtSend1;
 
     private SensorManager sensorManager;
     private Sensor lightSensor;
@@ -62,6 +80,87 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mSendText0 = findViewById(R.id.edt_send_ch0);
+        mReception0 = findViewById(R.id.tv_receive_ch0);
+
+        mBtOpen = findViewById(R.id.bt_open);
+        mBtOpen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mFd0 == NULL) {
+                    mFd0 = serialPort0.Open(0, 9600, 0);
+                    if( mFd0 != NULL) {
+                        mFileInputStream0 = new FileInputStream(mFd0);
+                        mFileOutputStream0 = new FileOutputStream(mFd0);
+
+                        if( mReadingThread0 == null ) {
+                            mReadingThread0 = new ReadingThread0();
+                            mReadingThread0.start();
+                        }
+                    }
+                }
+//                if(mFd1 == NULL) {
+//                    mFd1 = serialPort0.Open(1, 9600, 0);
+//                    if( mFd1 != NULL) {
+//                        mFileInputStream1 = new FileInputStream(mFd1);
+//                        mFileOutputStream1 = new FileOutputStream(mFd1);
+//
+//                        if( mReadingThread1 == null ) {
+//                            mReadingThread1 = new ReadingThread1();
+//                            mReadingThread1.start();
+//                        }
+//                    }
+//                }
+            }
+        });
+
+        mBtClose = findViewById(R.id.bt_close);
+        mBtClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mReadingThread0.interrupt();
+                if(mFd0 !=null ) {
+                    serialPort0.Close();
+                    mFd0 = null;
+                }
+//                mReadingThread1.interrupt();
+//                if(mFd1 !=null ) {
+//                    serialPort1.Close();
+//                    mFd1 = null;
+//                }
+            }
+        });
+
+        mBtSend0 = findViewById(R.id.bt_send1);
+        mBtSend0.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if( mFd0 == null )
+                    return;
+                if(mSendingThread0 == null)
+                    return;
+
+                mWBuffer0 = mSendText0.getText().toString().getBytes();
+                mSendingThread0 = new SendingThread0();
+                mSendingThread0.start();
+            }
+        });
+
+        mBtSend1 = findViewById(R.id.bt_send2);
+        mBtSend1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if( mFd1 == null )
+                    return;
+                if(mSendingThread1 == null)
+                    return;
+
+                mWBuffer1 = mSendText1.getText().toString().getBytes();
+                mSendingThread1 = new SendingThread1();
+                mSendingThread1.start();
+            }
+        });
 
         mTvSensor = findViewById(R.id.tv_sensor);
         sensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
@@ -153,13 +252,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         return sb.toString();
     }
 
-    private class SendingThread extends Thread {
+    private class SendingThread0 extends Thread {
         @Override
         public void run() {
 //			while (!isInterrupted()) {
             try {
-                if (mFileOutputStream != null) {
-                    mFileOutputStream.write(mWBuffer);
+                if (mFileOutputStream0 != null) {
+                    mFileOutputStream0.write(mWBuffer0);
                 } else {
                     return;
                 }
@@ -171,7 +270,24 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
     }
 
-    private class ReadingThread extends Thread {
+    private class SendingThread1 extends Thread {
+        @Override
+        public void run() {
+//			while (!isInterrupted()) {
+            try {
+                if (mFileOutputStream1 != null) {
+                    mFileOutputStream1.write(mWBuffer1);
+                } else {
+                    return;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                return;
+            }
+//			}
+        }
+    }
+    private class ReadingThread0 extends Thread {
         @Override
         public void run() {
             super.run();
@@ -179,10 +295,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 int size;
                 try {
                     byte[] buffer = new byte[256];
-                    if (mFileInputStream == null) return;
-                    size = mFileInputStream.read(buffer);
+                    if (mFileInputStream0 == null) return;
+                    size = mFileInputStream0.read(buffer);
                     if (size > 0) {
-                        onDataReceived(buffer, size);
+                        onDataReceived0(buffer, size);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -192,13 +308,46 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
     }
 
-    protected void onDataReceived(final byte[] buffer, final int size) {
+    protected void onDataReceived0(final byte[] buffer, final int size) {
         runOnUiThread(new Runnable() {
             public void run() {
-                if (mReception != null) {
+                if (mReception0 != null) {
                     //mReception.append(new String(buffer, 0, size));
                     String sRecived = "<=" + byteArrayToHex(buffer, size);
-                    mReception.append( sRecived);
+                    mReception0.append( sRecived);
+                }
+            }
+        });
+    }
+
+    private class ReadingThread1 extends Thread {
+        @Override
+        public void run() {
+            super.run();
+            while(!isInterrupted()) {
+                int size;
+                try {
+                    byte[] buffer = new byte[256];
+                    if (mFileInputStream1 == null) return;
+                    size = mFileInputStream1.read(buffer);
+                    if (size > 0) {
+                        onDataReceived1(buffer, size);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return;
+                }
+            }
+        }
+    }
+
+    protected void onDataReceived1(final byte[] buffer, final int size) {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                if (mReception1 != null) {
+                    //mReception.append(new String(buffer, 0, size));
+                    String sRecived = "<=" + byteArrayToHex(buffer, size);
+                    mReception1.append( sRecived);
                 }
             }
         });
