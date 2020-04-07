@@ -27,7 +27,7 @@
             android:orientation="vertical">
 
             <EditText
-                android:id="@+id/editText"
+                android:id="@+id/edt_send_ch0"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#DFDEDE"
@@ -43,9 +43,9 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/textView3"
+                android:id="@+id/tv_receive_ch0"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
+                android:layout_height="80dp"
                 android:background="#F8F7F7"
                 android:scrollbars="vertical"
                 android:text="TextView" />
@@ -58,7 +58,7 @@
             </LinearLayout>
 
             <EditText
-                android:id="@+id/editText2"
+                android:id="@+id/edt_send_ch1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#DFDEDE"
@@ -72,11 +72,92 @@
                 android:orientation="vertical"></LinearLayout>
 
             <TextView
-                android:id="@+id/textView"
+                android:id="@+id/tv_receive_ch1"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
+                android:layout_height="80dp"
                 android:background="#F8F7F7"
                 android:scrollbars="vertical"
+                android:text="TextView" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:orientation="vertical"></LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Switch
+                    android:id="@+id/sw_relay0"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Relay 0" />
+
+                <LinearLayout
+                    android:layout_width="20dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"></LinearLayout>
+
+                <Switch
+                    android:id="@+id/sw_relay1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Relay 1" />
+
+                <LinearLayout
+                    android:layout_width="20dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"></LinearLayout>
+
+                <Switch
+                    android:id="@+id/sw_relay2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Relay 2" />
+
+                <LinearLayout
+                    android:layout_width="20dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"></LinearLayout>
+
+                <Switch
+                    android:id="@+id/sw_relay3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Relay 3" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:orientation="vertical"></LinearLayout>
+
+            <EditText
+                android:id="@+id/edt_send_spi"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#CDCCCC"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:text="Name" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:orientation="vertical"></LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_receive_spi"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#FFFDFD"
                 android:text="TextView" />
 
         </LinearLayout>
@@ -84,42 +165,54 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="5"
+            android:layout_weight="4"
             android:orientation="vertical">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="5dp20dp"
-                android:orientation="vertical"></LinearLayout>
-
             <Button
-                android:id="@+id/button"
+                android:id="@+id/bt_open"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Button" />
+                android:text="OPEN" />
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="5dp"
+                android:layout_height="10dp"
                 android:orientation="vertical"></LinearLayout>
 
             <Button
-                android:id="@+id/button2"
+                android:id="@+id/bt_send1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Button" />
+                android:text="SEND CH0" />
 
             <Button
-                android:id="@+id/button3"
+                android:id="@+id/bt_send2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Button" />
+                android:text="SEND CH1" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:orientation="vertical"></LinearLayout>
 
             <Button
-                android:id="@+id/button4"
+                android:id="@+id/bt_close"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Button" />
+                android:text="CLOSE" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:orientation="vertical"></LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_sensor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#CECFCF"
+                android:text="TextView" />
         </LinearLayout>
 
     </LinearLayout>
