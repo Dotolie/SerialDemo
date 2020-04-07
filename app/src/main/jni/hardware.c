@@ -83,6 +83,8 @@ JNIEXPORT jint JNICALL Java_com_friendlyarm_FriendlyThings_HardwareController_se
        	int fd, len;
     	char buf[60];
 
+        LOGD("setGpio : %s=%d ",pGpios[gpio], out);
+
     	len = snprintf(buf, sizeof(buf), "%s", pGpios[gpio]);
 
     	fd = open(buf, O_WRONLY);
@@ -95,7 +97,6 @@ JNIEXPORT jint JNICALL Java_com_friendlyarm_FriendlyThings_HardwareController_se
 
     	close(fd);
 
-        LOGD("%s=%d ",pGpios[gpio], out);
 
         return fd;
 }
@@ -112,6 +113,8 @@ JNIEXPORT jint JNICALL Java_com_friendlyarm_FriendlyThings_HardwareController_ge
        	int val;
     	char buf[4] = {0,};
 
+        LOGD("getGpio : %s=%d ",pGpios[gpio], val);
+
     	len = snprintf(buf, sizeof(buf), "%s", pGpios[gpio]);
 
     	fd = open(buf, O_RDONLY);
@@ -123,8 +126,6 @@ JNIEXPORT jint JNICALL Java_com_friendlyarm_FriendlyThings_HardwareController_ge
         val = atoi(buf);
 
     	close(fd);
-
-        LOGD("%s=%d ",pGpios[gpio], val);
 
         return val;
 }
