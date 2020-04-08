@@ -20,8 +20,8 @@
 
 static const char *TAG="Hardware";
 static const char *pDevice[2] = {
-    "/dev/ttyUSB0",
-    "/dev/ttyUSB1",
+    "/dev/ttyS0",
+    "/dev/tty",
 };
 
 static speed_t getBaudrate(jint baudrate)
@@ -132,108 +132,15 @@ JNIEXPORT jint JNICALL Java_com_friendlyarm_FriendlyThings_HardwareController_ge
 
 /*
  * Class:     com_friendlyarm_FriendlyThings_HardwareController
- * Method:    open
- * Signature: (III)Ljava/io/FileDescriptor;
- */
-JNIEXPORT jobject JNICALL Java_com_friendlyarm_FriendlyThings_HardwareController_open
-  (JNIEnv *env, jclass thiz, jint devNo, jint baudrate, jint flags)
-{
-	int fd;
-	speed_t speed;
-	jobject mFileDescriptor;
-
-	/* Check arguments */
-	{
-		speed = getBaudrate(baudrate);
-		if (speed == -1) {
-			/* TODO: throw an exception */
-			LOGE("Invalid baudrate");
-			return NULL;
-		}
-	}
-
-	/* Opening device */
-	{
-		jboolean iscopy;
-//		const char *path_utf = (*env)->GetStringUTFChars(env, pDevice[devNo], &iscopy);
-		LOGD("Opening serial port devNo=%d, %s with flags 0x%x", devNo, pDevice[devNo], O_RDWR | flags);
-		fd = open(pDevice[devNo], O_RDWR | flags);
-		LOGD("open() fd = %d", fd);
-//		(*env)->ReleaseStringUTFChars(env, pDevice[devNo], path_utf);
-		if (fd == -1)
-		{
-			/* Throw an exception */
-			LOGE("Cannot open port");
-			/* TODO: throw an exception */
-			return NULL;
-		}
-	}
-
-	/* Configure device */
-	{
-		struct termios cfg;
-		LOGD("Configuring serial port");
-		if (tcgetattr(fd, &cfg))
-		{
-			LOGE("tcgetattr() failed");
-			close(fd);
-			/* TODO: throw an exception */
-			return NULL;
-		}
-
-		cfmakeraw(&cfg);
-		cfsetispeed(&cfg, speed);
-		cfsetospeed(&cfg, speed);
-
-		if (tcsetattr(fd, TCSANOW, &cfg))
-		{
-			LOGE("tcsetattr() failed");
-			close(fd);
-			/* TODO: throw an exception */
-			return NULL;
-		}
-	}
-
-	/* Create a corresponding file descriptor */
-	{
-		jclass cFileDescriptor = (*env)->FindClass(env, "java/io/FileDescriptor");
-		jmethodID iFileDescriptor = (*env)->GetMethodID(env, cFileDescriptor, "<init>", "()V");
-		jfieldID descriptorID = (*env)->GetFieldID(env, cFileDescriptor, "descriptor", "I");
-		mFileDescriptor = (*env)->NewObject(env, cFileDescriptor, iFileDescriptor);
-		(*env)->SetIntField(env, mFileDescriptor, descriptorID, (jint)fd);
-	}
-
-	return mFileDescriptor;
-}
-
-/*
- * Class:     com_friendlyarm_FriendlyThings_HardwareController
- * Method:    close
- * Signature: ()V
- */
-JNIEXPORT void JNICALL Java_com_friendlyarm_FriendlyThings_HardwareController_close
-  (JNIEnv *env, jclass thiz)
-{
-	jclass SerialPortClass = (*env)->GetObjectClass(env, thiz);
-	jclass FileDescriptorClass = (*env)->FindClass(env, "java/io/FileDescriptor");
-
-	jfieldID mFdID = (*env)->GetFieldID(env, SerialPortClass, "mFd", "Ljava/io/FileDescriptor;");
-	jfieldID descriptorID = (*env)->GetFieldID(env, FileDescriptorClass, "descriptor", "I");
-
-	jobject mFd = (*env)->GetObjectField(env, thiz, mFdID);
-	jint descriptor = (*env)->GetIntField(env, mFd, descriptorID);
-
-	LOGD("close(fd = %d)", descriptor);
-	close(descriptor);
-}
-
-/*
- * Class:     com_friendlyarm_FriendlyThings_HardwareController
  * Method:    setTxMode
  * Signature: (I)I
  */
 JNIEXPORT jint JNICALL Java_com_friendlyarm_FriendlyThings_HardwareController_setTxMode
-  (JNIEnv *, jclass, jint);
+  (JNIEnv *, jclass, jint)
+ {
+
+    return 0;
+ }
 
 /*
  * Class:     com_friendlyarm_FriendlyThings_HardwareController
@@ -241,4 +148,7 @@ JNIEXPORT jint JNICALL Java_com_friendlyarm_FriendlyThings_HardwareController_se
  * Signature: (I)I
  */
 JNIEXPORT jint JNICALL Java_com_friendlyarm_FriendlyThings_HardwareController_setRxMode
-  (JNIEnv *, jclass, jint);
+  (JNIEnv *, jclass, jint)
+{
+    return 0;
+}

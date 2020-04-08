@@ -100,18 +100,18 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         }
                     }
                 }
-//                if(mFd1 == NULL) {
-//                    mFd1 = serialPort0.Open(1, 9600, 0);
-//                    if( mFd1 != NULL) {
-//                        mFileInputStream1 = new FileInputStream(mFd1);
-//                        mFileOutputStream1 = new FileOutputStream(mFd1);
-//
-//                        if( mReadingThread1 == null ) {
-//                            mReadingThread1 = new ReadingThread1();
-//                            mReadingThread1.start();
-//                        }
-//                    }
-//                }
+                if(mFd1 == NULL) {
+                    mFd1 = serialPort1.Open(1, 9600, 0);
+                    if( mFd1 != NULL) {
+                        mFileInputStream1 = new FileInputStream(mFd1);
+                        mFileOutputStream1 = new FileOutputStream(mFd1);
+
+                        if( mReadingThread1 == null ) {
+                            mReadingThread1 = new ReadingThread1();
+                            mReadingThread1.start();
+                        }
+                    }
+                }
             }
         });
 
@@ -119,16 +119,16 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         mBtClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mReadingThread0.interrupt();
                 if(mFd0 !=null ) {
+                    mReadingThread0.interrupt();
                     serialPort0.Close();
                     mFd0 = null;
                 }
-//                mReadingThread1.interrupt();
-//                if(mFd1 !=null ) {
-//                    serialPort1.Close();
-//                    mFd1 = null;
-//                }
+                if(mFd1 !=null ) {
+                    mReadingThread1.interrupt();
+                    serialPort1.Close();
+                    mFd1 = null;
+                }
             }
         });
 

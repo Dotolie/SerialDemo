@@ -2,7 +2,7 @@ package com.friendlyarm.FriendlyThings;
 
 import android.util.Log;
 
-import java.io.FileDescriptor;
+
 
 public class HardwareController {
 
@@ -23,11 +23,6 @@ public class HardwareController {
 //    static public native int writeBytesToSPI(int spi_fd, byte[] writeData, int spi_delay, int spi_speed, int spi_bits);
 //    static public native int readBytesFromSPI(int spi_fd, byte[] readBuff, int spi_delay, int spi_speed, int spi_bits);
 
-    /* Serial Port */
-    static native FileDescriptor open(int devNo, int baudrate, int flags);
-    static native void close();
-    static native int setTxMode(int pin);
-    static native int setRxMode(int pin);
 
     static {
         try {
