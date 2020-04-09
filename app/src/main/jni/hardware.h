@@ -23,38 +23,6 @@ JNIEXPORT jint JNICALL Java_com_friendlyarm_FriendlyThings_HardwareController_se
 JNIEXPORT jint JNICALL Java_com_friendlyarm_FriendlyThings_HardwareController_getGPIOValue
   (JNIEnv *, jclass, jint);
 
-/*
- * Class:     com_friendlyarm_FriendlyThings_HardwareController
- * Method:    open
- * Signature: (III)Ljava/io/FileDescriptor;
- */
-JNIEXPORT jobject JNICALL Java_com_friendlyarm_FriendlyThings_HardwareController_open
-  (JNIEnv *, jclass, jint, jint, jint);
-
-/*
- * Class:     com_friendlyarm_FriendlyThings_HardwareController
- * Method:    close
- * Signature: ()V
- */
-JNIEXPORT void JNICALL Java_com_friendlyarm_FriendlyThings_HardwareController_close
-  (JNIEnv *, jclass);
-
-/*
- * Class:     com_friendlyarm_FriendlyThings_HardwareController
- * Method:    setTxMode
- * Signature: (I)I
- */
-JNIEXPORT jint JNICALL Java_com_friendlyarm_FriendlyThings_HardwareController_setTxMode
-  (JNIEnv *, jclass, jint);
-
-/*
- * Class:     com_friendlyarm_FriendlyThings_HardwareController
- * Method:    setRxMode
- * Signature: (I)I
- */
-JNIEXPORT jint JNICALL Java_com_friendlyarm_FriendlyThings_HardwareController_setRxMode
-  (JNIEnv *, jclass, jint);
-
 #ifdef __cplusplus
 }
 #endif

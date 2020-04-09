@@ -7,6 +7,22 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+/*
+ * Class:     com_friendlyarm_FriendlyThings_Serial
+ * Method:    open
+ * Signature: (III)Ljava/io/FileDescriptor;
+ */
+JNIEXPORT jobject JNICALL Java_com_friendlyarm_FriendlyThings_Serial_open
+  (JNIEnv *, jobject, jint, jint, jint);
+
+/*
+ * Class:     com_friendlyarm_FriendlyThings_Serial
+ * Method:    close
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_com_friendlyarm_FriendlyThings_Serial_close
+  (JNIEnv *, jobject);
+
 #ifdef __cplusplus
 }
 #endif
