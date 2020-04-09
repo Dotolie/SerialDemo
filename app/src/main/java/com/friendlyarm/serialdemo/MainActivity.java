@@ -8,6 +8,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -83,6 +84,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         mSendText0 = findViewById(R.id.edt_send_ch0);
         mReception0 = findViewById(R.id.tv_receive_ch0);
+        mSendText1 = findViewById(R.id.edt_send_ch1);
+        mReception1 = findViewById(R.id.tv_receive_ch1);
 
         mBtOpen = findViewById(R.id.bt_open);
         mBtOpen.setOnClickListener(new View.OnClickListener() {
@@ -138,8 +141,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             public void onClick(View v) {
                 if( mFd0 == null )
                     return;
-                if(mSendingThread0 == null)
-                    return;
+
 
                 mWBuffer0 = mSendText0.getText().toString().getBytes();
                 mSendingThread0 = new SendingThread0();
@@ -152,8 +154,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             @Override
             public void onClick(View v) {
                 if( mFd1 == null )
-                    return;
-                if(mSendingThread1 == null)
                     return;
 
                 mWBuffer1 = mSendText1.getText().toString().getBytes();
@@ -247,26 +247,28 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     String byteArrayToHex(byte[] a, int nSize) {
         StringBuilder sb = new StringBuilder();
         for(int i=0;i<nSize;i++)
-            sb.append(String.format("%02x ", a[i]&0xff));
-        sb.append(String.format("\r\n"));
+            sb.append(String.format("0x%02x ", a[i]&0xff));
+//        sb.append(String.format("\r\n"));
         return sb.toString();
     }
 
     private class SendingThread0 extends Thread {
         @Override
         public void run() {
-//			while (!isInterrupted()) {
-            try {
-                if (mFileOutputStream0 != null) {
-                    mFileOutputStream0.write(mWBuffer0);
-                } else {
+			while (!isInterrupted()) {
+                try {
+                    if (mFileOutputStream0 != null) {
+                        HardwareController.setGPIOValue(GPIOEnum.PIN_485_0_D, 1);
+                        mFileOutputStream0.write(mWBuffer0);
+                        HardwareController.setGPIOValue(GPIOEnum.PIN_485_0_D, 0);
+                    } else {
+                        return;
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
                     return;
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
-                return;
-            }
-//			}
+			}
         }
     }
 
@@ -276,7 +278,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 //			while (!isInterrupted()) {
             try {
                 if (mFileOutputStream1 != null) {
+                    HardwareController.setGPIOValue(GPIOEnum.PIN_485_1_D, 1);
                     mFileOutputStream1.write(mWBuffer1);
+                    HardwareController.setGPIOValue(GPIOEnum.PIN_485_0_D, 0);
                 } else {
                     return;
                 }
@@ -313,7 +317,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             public void run() {
                 if (mReception0 != null) {
                     //mReception.append(new String(buffer, 0, size));
-                    String sRecived = "<=" + byteArrayToHex(buffer, size);
+                    String sRecived = byteArrayToHex(buffer, size);
                     mReception0.append( sRecived);
                 }
             }
@@ -346,7 +350,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             public void run() {
                 if (mReception1 != null) {
                     //mReception.append(new String(buffer, 0, size));
-                    String sRecived = "<=" + byteArrayToHex(buffer, size);
+                    String sRecived = byteArrayToHex(buffer, size);
                     mReception1.append( sRecived);
                 }
             }

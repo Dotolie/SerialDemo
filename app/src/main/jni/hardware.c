@@ -21,10 +21,15 @@
 static const char *TAG="Hardware";
 
 
-static const char *pGpios[7] = {
+static const char *pGpios[9] = {
     "/sys/class/gpio/gpio35/value",
-    "/sys/class/gpio/gpio35/value",
+
+    "/sys/class/gpio/gpio55/value",
+    "/sys/class/gpio/gpio56/value",
+
+    "/sys/class/gpio/gpio2/value",
     "/sys/class/gpio/gpio66/value",
+
     "/sys/class/gpio/gpio67/value",
     "/sys/class/gpio/gpio68/value",
     "/sys/class/gpio/gpio69/value",
