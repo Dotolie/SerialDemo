@@ -255,7 +255,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private class SendingThread0 extends Thread {
         @Override
         public void run() {
-			while (!isInterrupted()) {
+//			while (!isInterrupted()) {
                 try {
                     if (mFileOutputStream0 != null) {
                         HardwareController.setGPIOValue(GPIOEnum.PIN_485_0_D, 1);
@@ -268,7 +268,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     e.printStackTrace();
                     return;
                 }
-			}
+//			}
         }
     }
 
@@ -280,7 +280,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 if (mFileOutputStream1 != null) {
                     HardwareController.setGPIOValue(GPIOEnum.PIN_485_1_D, 1);
                     mFileOutputStream1.write(mWBuffer1);
-                    HardwareController.setGPIOValue(GPIOEnum.PIN_485_0_D, 0);
+                    HardwareController.setGPIOValue(GPIOEnum.PIN_485_1_D, 0);
                 } else {
                     return;
                 }
