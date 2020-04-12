@@ -5,6 +5,9 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/ioctl.h>
+#include <linux/types.h>
+#include <linux/spi/spidev.h>
 #include <fcntl.h>
 #include <string.h>
 #include <stdio.h>
@@ -96,23 +99,73 @@ JNIEXPORT jint JNICALL Java_com_friendlyarm_FriendlyThings_HardwareController_ge
 
 /*
  * Class:     com_friendlyarm_FriendlyThings_HardwareController
- * Method:    setTxMode
- * Signature: (I)I
+ * Method:    open
+ * Signature: (Ljava/lang/String;I)I
  */
-JNIEXPORT jint JNICALL Java_com_friendlyarm_FriendlyThings_HardwareController_setTxMode
-  (JNIEnv *env, jclass thiz, jint pin)
- {
+JNIEXPORT jint JNICALL Java_com_friendlyarm_FriendlyThings_HardwareController_open
+  (JNIEnv *env, jclass thiz, jstring name, jint arg)
+{
+    int i = 0;
+    int nRet = 0;
+    int nFd = -1;
+    unsigned char mode = 0;
+    unsigned char tx[64] = { 0x00, 0xff, };
+    unsigned char rx[64] = { 0,};
 
-    return 0;
- }
+    struct spi_ioc_transfer tr = {
+        .tx_buf = (unsigned long)tx,
+        .rx_buf = (unsigned long)rx,
+        .len = 2, //ARRAY_SIZE(tx),
+        .delay_usecs = 0,
+        .speed_hz = 100000,
+        .bits_per_word = 8,
+    };
+
+    const char *device = (*env)->GetStringUTFChars(env, name, NULL);//Java String to C Style string
+
+    nFd = open(device, arg);
+    LOGD("spi open : %s=%d ,nFd=%d",device, arg, nFd);
+
+    mode = SPI_CPHA | SPI_CPOL;
+    nRet = ioctl(nFd, SPI_IOC_WR_MODE, &mode);
+    LOGD("iotcl mode=%x, nRet=%d", mode, nRet);
+
+    nRet = ioctl(nFd, SPI_IOC_MESSAGE(1), &tx);
+    LOGD("iotcl tx, nRet=%d", nRet);
+
+    for(i=0;i<2;i++) {
+        LOGD("rx[%d]=%x", i, rx[i]);
+    }
+    (*env)->ReleaseStringUTFChars(env, name , device);
+
+    return nFd;
+}
 
 /*
  * Class:     com_friendlyarm_FriendlyThings_HardwareController
- * Method:    setRxMode
- * Signature: (I)I
+ * Method:    close
+ * Signature: (I)V
  */
-JNIEXPORT jint JNICALL Java_com_friendlyarm_FriendlyThings_HardwareController_setRxMode
-  (JNIEnv *env, jclass thiz, jint pin)
+JNIEXPORT void JNICALL Java_com_friendlyarm_FriendlyThings_HardwareController_close
+  (JNIEnv *env, jclass thiz, jint fd)
 {
-    return 0;
+    LOGD("spi close : nFd=%d", fd);
+
+    close(fd);
+}
+
+
+/*
+ * Class:     com_friendlyarm_FriendlyThings_HardwareController
+ * Method:    SPItransferBytes
+ * Signature: (I[B[BIII)I
+ */
+JNIEXPORT jint JNICALL Java_com_friendlyarm_FriendlyThings_HardwareController_SPItransferBytes
+  (JNIEnv *env, jclass thiz, jint fd, jbyteArray tx, jbyteArray rx, jint delay, jint speed, jint flas)
+{
+    int nRet = 0;
+
+
+
+    return nRet;
 }

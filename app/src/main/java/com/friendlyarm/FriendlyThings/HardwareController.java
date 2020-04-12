@@ -6,7 +6,8 @@ import android.util.Log;
 
 public class HardwareController {
 
-
+    static public native int open(String devName, int flags);
+    static public native void close(int fd);
     /* GPIO */
     static public native int setGPIOValue(int pin, int value);
     static public native int getGPIOValue(int pin);
@@ -19,7 +20,7 @@ public class HardwareController {
 //    static public native int setSPIMaxSpeed( int spi_fd, int spi_speed);
 //    static public native int setSPIDataMode( int spi_fd, int mode);
 //    static public native int SPItransferOneByte( int spi_fd, byte byteData, int spi_delay, int spi_speed, int spi_bits);
-//    static public native int SPItransferBytes(int spi_fd, byte[] writeData, byte[] readBuff, int spi_delay, int spi_speed, int spi_bits);
+    static public native int SPItransferBytes(int spi_fd, byte[] writeData, byte[] readBuff, int spi_delay, int spi_speed, int spi_bits);
 //    static public native int writeBytesToSPI(int spi_fd, byte[] writeData, int spi_delay, int spi_speed, int spi_bits);
 //    static public native int readBytesFromSPI(int spi_fd, byte[] readBuff, int spi_delay, int spi_speed, int spi_bits);
 

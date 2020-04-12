@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.friendlyarm.FriendlyThings.GPIOEnum;
 import com.friendlyarm.FriendlyThings.HardwareController;
+import com.friendlyarm.FriendlyThings.SPI;
 import com.friendlyarm.FriendlyThings.Serial;
 
 import java.io.FileDescriptor;
@@ -40,6 +41,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private FileDescriptor mFd1 = null;
     private FileInputStream mFileInputStream1;
     private FileOutputStream mFileOutputStream1;
+
+    private SPI spi = new SPI();
+
 
     //serial sending thread
     private SendingThread0 mSendingThread0;
@@ -64,6 +68,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private Button mBtSend0;
     private Button mBtSend1;
 
+    private Button mBtSpiSend;
+
     private SensorManager sensorManager;
     private Sensor lightSensor;
     private TextView mTvSensor;
@@ -72,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private Switch mSwRelay1;
     private Switch mSwRelay2;
     private Switch mSwRelay3;
+
 
     public MainActivity() {
     }
@@ -86,6 +93,16 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         mReception0 = findViewById(R.id.tv_receive_ch0);
         mSendText1 = findViewById(R.id.edt_send_ch1);
         mReception1 = findViewById(R.id.tv_receive_ch1);
+
+        mBtSpiSend = findViewById(R.id.bt_send_spi);
+        mBtSpiSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                spi.begin();
+
+                spi.end();
+            }
+        });
 
         mBtOpen = findViewById(R.id.bt_open);
         mBtOpen.setOnClickListener(new View.OnClickListener() {

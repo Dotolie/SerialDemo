@@ -23,6 +23,33 @@ JNIEXPORT jint JNICALL Java_com_friendlyarm_FriendlyThings_HardwareController_se
 JNIEXPORT jint JNICALL Java_com_friendlyarm_FriendlyThings_HardwareController_getGPIOValue
   (JNIEnv *, jclass, jint);
 
+
+/*
+ * Class:     com_friendlyarm_FriendlyThings_HardwareController
+ * Method:    open
+ * Signature: (Ljava/lang/String;I)I
+ */
+JNIEXPORT jint JNICALL Java_com_friendlyarm_FriendlyThings_HardwareController_open
+  (JNIEnv *, jclass, jstring, jint);
+
+/*
+ * Class:     com_friendlyarm_FriendlyThings_HardwareController
+ * Method:    close
+ * Signature: (I)V
+ */
+JNIEXPORT void JNICALL Java_com_friendlyarm_FriendlyThings_HardwareController_close
+  (JNIEnv *, jclass, jint);
+
+
+/*
+ * Class:     com_friendlyarm_FriendlyThings_HardwareController
+ * Method:    SPItransferBytes
+ * Signature: (I[B[BIII)I
+ */
+JNIEXPORT jint JNICALL Java_com_friendlyarm_FriendlyThings_HardwareController_SPItransferBytes
+  (JNIEnv *, jclass, jint, jbyteArray, jbyteArray, jint, jint, jint);
+
+
 #ifdef __cplusplus
 }
 #endif
