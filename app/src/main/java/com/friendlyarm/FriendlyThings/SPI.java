@@ -15,15 +15,17 @@ public class SPI {
     private int spi_speed = 500000;
     private int spi_byte_order = SPIEnum.LSBFIRST;
 
-    private static final String devName = "/dev/spidev32766.0";
     private int spi_fd = -1;
 
     public void begin() {
-        spi_fd = HardwareController.open( devName, FileCtlEnum.O_RDWR );
+        if( spi_fd > -1)
+            return;
+
+        spi_fd = HardwareController.open();
         if (spi_fd >= 0) {
-            Log.d(TAG, "open " + devName + "ok!");
+            Log.d(TAG, "open " +  "ok!");
         } else {
-            Log.d(TAG, "open " + devName + "failed!");
+            Log.d(TAG, "open " + "failed!");
             spi_fd = -1;
         }
     }

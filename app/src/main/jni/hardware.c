@@ -50,7 +50,7 @@ JNIEXPORT jint JNICALL Java_com_friendlyarm_FriendlyThings_HardwareController_se
        	int fd, len;
     	char buf[60];
 
-        LOGD("setGpio : %s=%d ",pGpios[gpio], out);
+//        LOGD("setGpio : %s=%d ",pGpios[gpio], out);
 
     	len = snprintf(buf, sizeof(buf), "%s", pGpios[gpio]);
 
@@ -80,7 +80,7 @@ JNIEXPORT jint JNICALL Java_com_friendlyarm_FriendlyThings_HardwareController_ge
        	int val;
     	char buf[4] = {0,};
 
-        LOGD("getGpio : %s=%d ",pGpios[gpio], val);
+//        LOGD("getGpio : %s=%d ",pGpios[gpio], val);
 
     	len = snprintf(buf, sizeof(buf), "%s", pGpios[gpio]);
 
@@ -103,22 +103,19 @@ JNIEXPORT jint JNICALL Java_com_friendlyarm_FriendlyThings_HardwareController_ge
  * Signature: (Ljava/lang/String;I)I
  */
 JNIEXPORT jint JNICALL Java_com_friendlyarm_FriendlyThings_HardwareController_open
-  (JNIEnv *env, jclass thiz, jstring name, jint arg)
+  (JNIEnv *env, jclass thiz)
 {
     int nRet = 0;
     int nFd = -1;
     unsigned char mode = 0;
 
-    const char *device = (*env)->GetStringUTFChars(env, name, NULL);//Java String to C Style string
-
-    nFd = open(device, arg);
-    LOGD("spi open : %s=%d ,nFd=%d",device, arg, nFd);
+    nFd = open("/dev/spidev32766.0", O_RDWR);
+//    LOGD("spi open : /dev/spidev32766.0 ,nFd=%d", nFd);
 
     mode = SPI_CPHA | SPI_CPOL;
     nRet = ioctl(nFd, SPI_IOC_WR_MODE, &mode);
     LOGD("iotcl mode=%x, nRet=%d", mode, nRet);
 
-    (*env)->ReleaseStringUTFChars(env, name , device);
 
     return nFd;
 }
@@ -149,30 +146,36 @@ JNIEXPORT jint JNICALL Java_com_friendlyarm_FriendlyThings_HardwareController_SP
     int nRet = 0;
     unsigned char tx[16] = { 0,};
     unsigned char rx[16] = { 0,};
+    size_t len = (*env)->GetArrayLength(env, jtx);
+
     struct spi_ioc_transfer tr = {
         .tx_buf = (unsigned long)tx,
         .rx_buf = (unsigned long)rx,
-        .len = 2, //ARRAY_SIZE(tx),
+        .len = len, //ARRAY_SIZE(tx),
         .delay_usecs = delay,
         .speed_hz = speed,
         .bits_per_word = bits,
     };
 
-    size_t len = (*env)->GetArrayLength(env, jtx);
+
     jbyte *nativeBytes = (*env)->GetByteArrayElements(env, jtx, 0);
 
     LOGD("fd=%d, delay=%d, speed=%d, bits=%d", fd, delay, speed, bits);
 
     memcpy(tx, nativeBytes, len);
+//    for(i=0;i<len;i++) {
+//        LOGD("tx[%d]=%x", i, nativeBytes[i]);
+//    }
+
     nRet = ioctl(fd, SPI_IOC_MESSAGE(1), &tr);
     LOGD("iotcl tr, nRet=%d", nRet);
 
-    for(i=0;i<2;i++) {
-        LOGD("rx[%d]=%x", i, rx[i]);
-    }
+//    for(i=0;i<len;i++) {
+//        LOGD("rx[%d]=%x", i, rx[i]);
+//    }
 
     (*env)->SetByteArrayRegion(env, jrx, 0, len, (jbyte*)rx);
     (*env)->ReleaseByteArrayElements( env, jtx, nativeBytes, JNI_ABORT);
 
-    return nRet;
+    return len;
 }

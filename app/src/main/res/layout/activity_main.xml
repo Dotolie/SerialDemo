@@ -160,7 +160,6 @@
                 android:background="#CDCCCC"
                 android:ems="10"
                 android:inputType="textPersonName"
-                android:text="Name"
                 android:textSize="24sp" />
 
             <LinearLayout
@@ -174,7 +173,6 @@
                 android:layout_height="match_parent"
                 android:background="#FFFDFD"
                 android:scrollbars="vertical"
-                android:text="TextView"
                 android:textSize="24sp" />
 
         </LinearLayout>
@@ -197,11 +195,6 @@
                 android:text="OPEN"
                 android:textSize="18sp" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="10dp"
-                android:orientation="vertical"></LinearLayout>
-
             <Button
                 android:id="@+id/bt_send1"
                 android:layout_width="match_parent"
@@ -216,11 +209,6 @@
                 android:text="SEND CH1"
                 android:textSize="18sp" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="10dp"
-                android:orientation="vertical"></LinearLayout>
-
             <Button
                 android:id="@+id/bt_close"
                 android:layout_width="match_parent"
@@ -230,7 +218,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="10dp"
                 android:orientation="vertical"></LinearLayout>
 
             <TextView
@@ -244,14 +232,44 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:orientation="vertical"></LinearLayout>
+                android:layout_height="10sp"
+                android:orientation="vertical">
+
+            </LinearLayout>
 
             <Button
-                android:id="@+id/bt_send_spi"
+                android:id="@+id/bt_open_spi"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="SEND SPI"
+                android:text="OPEN SPI"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/bt_tx0_spi"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="GetVer"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/bt_rd0_spi"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="READ 0B "
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/bt_wr0_spi"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="WRITE 0B C7"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/bt_close_spi"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="CLOSE SPI"
                 android:textSize="18sp" />
         </LinearLayout>
 

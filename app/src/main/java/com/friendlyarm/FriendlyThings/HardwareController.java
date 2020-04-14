@@ -6,7 +6,7 @@ import android.util.Log;
 
 public class HardwareController {
 
-    static public native int open(String devName, int flags);
+    static public native int open();
     static public native void close(int fd);
     /* GPIO */
     static public native int setGPIOValue(int pin, int value);

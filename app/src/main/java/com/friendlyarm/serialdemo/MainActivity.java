@@ -8,7 +8,6 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -62,13 +61,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private TextView mReception1;
     private EditText mSendText1;
 
+    private TextView mTvReceiveSpi;
+    private EditText mEtSendSpi;
 
     private Button mBtOpen;
     private Button mBtClose;
     private Button mBtSend0;
     private Button mBtSend1;
 
-    private Button mBtSpiSend;
+    private Button mBtOpenSpi;
+    private Button mBtCloseSpi;
+    private Button mBtGetVerSpi;
+    private Button mBtRead0Spi;
+    private Button mBtWrite0Spi;
 
     private SensorManager sensorManager;
     private Sensor lightSensor;
@@ -94,12 +99,58 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         mSendText1 = findViewById(R.id.edt_send_ch1);
         mReception1 = findViewById(R.id.tv_receive_ch1);
 
-        mBtSpiSend = findViewById(R.id.bt_send_spi);
-        mBtSpiSend.setOnClickListener(new View.OnClickListener() {
+        mTvReceiveSpi = findViewById(R.id.tv_receive_spi );
+        mEtSendSpi = findViewById(R.id.edt_send_spi);
+
+        mBtOpenSpi = findViewById(R.id.bt_open_spi);
+        mBtOpenSpi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 spi.begin();
-
+                mEtSendSpi.setText("");
+                mTvReceiveSpi.setText("");
+            }
+        });
+        mBtGetVerSpi = findViewById(R.id.bt_tx0_spi);
+        mBtGetVerSpi.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int nLen = 0;
+                byte[] ttx = { 0x01, 0x00 };
+                byte[] rrx = { 0x00, 0x00 };
+                mEtSendSpi.setText( byteArrayToHex( ttx, 2));
+                nLen = spi.transfer(ttx, rrx);
+                mTvReceiveSpi.append( byteArrayToHex(rrx, nLen));
+            }
+        });
+        mBtWrite0Spi = findViewById(R.id.bt_wr0_spi);
+        mBtWrite0Spi.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int nLen = 0;
+                byte[] ttx = { (byte)0x8b, (byte)0xc7 };
+                byte[] rrx = { 0x00, 0x00 };
+                mEtSendSpi.setText( byteArrayToHex( ttx, 2));
+                nLen = spi.transfer(ttx, rrx);
+                mTvReceiveSpi.append( byteArrayToHex(rrx, nLen));
+            }
+        });
+        mBtRead0Spi = findViewById(R.id.bt_rd0_spi);
+        mBtRead0Spi.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int nLen = 0;
+                byte[] ttx = { 0x0b, 0x00 };
+                byte[] rrx = { 0x00, 0x00 };
+                mEtSendSpi.setText( byteArrayToHex( ttx, 2));
+                nLen = spi.transfer(ttx, rrx);
+                mTvReceiveSpi.append( byteArrayToHex(rrx, nLen));
+            }
+        });
+        mBtCloseSpi = findViewById(R.id.bt_close_spi);
+        mBtCloseSpi.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 spi.end();
             }
         });

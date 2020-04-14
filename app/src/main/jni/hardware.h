@@ -30,7 +30,7 @@ JNIEXPORT jint JNICALL Java_com_friendlyarm_FriendlyThings_HardwareController_ge
  * Signature: (Ljava/lang/String;I)I
  */
 JNIEXPORT jint JNICALL Java_com_friendlyarm_FriendlyThings_HardwareController_open
-  (JNIEnv *, jclass, jstring, jint);
+  (JNIEnv *, jclass);
 
 /*
  * Class:     com_friendlyarm_FriendlyThings_HardwareController
