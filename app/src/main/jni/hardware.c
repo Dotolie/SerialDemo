@@ -10,6 +10,7 @@
 #include <linux/spi/spidev.h>
 #include <fcntl.h>
 #include <string.h>
+#include <errno.h>
 #include <stdio.h>
 #include <jni.h>
 #include "hardware.h"
@@ -25,18 +26,18 @@ static const char *TAG="Hardware";
 
 
 static const char *pGpios[9] = {
-    "/sys/class/gpio/gpio35/value",
+    "/sys/devices/platform/pinctrl/gpio/gpio35/value",
 
-    "/sys/class/gpio/gpio55/value",
-    "/sys/class/gpio/gpio56/value",
+    "/sys/devices/platform/pinctrl/gpio/gpio55/value",
+    "/sys/devices/platform/pinctrl/gpio/gpio56/value",
 
-    "/sys/class/gpio/gpio2/value",
-    "/sys/class/gpio/gpio66/value",
+    "/sys/devices/platform/pinctrl/gpio/gpio2/value",
+    "/sys/devices/platform/pinctrl/gpio/gpio66/value",
 
-    "/sys/class/gpio/gpio67/value",
-    "/sys/class/gpio/gpio68/value",
-    "/sys/class/gpio/gpio69/value",
-    "/sys/class/gpio/gpio70/value",
+    "/sys/devices/platform/pinctrl/gpio/gpio67/value",
+    "/sys/devices/platform/pinctrl/gpio/gpio68/value",
+    "/sys/devices/platform/pinctrl/gpio/gpio69/value",
+    "/sys/devices/platform/pinctrl/gpio/gpio70/value",
 };
 
 /*
