@@ -115,7 +115,7 @@ JNIEXPORT jint JNICALL Java_com_friendlyarm_FriendlyThings_HardwareController_op
 
     mode = SPI_CPHA | SPI_CPOL;
     nRet = ioctl(nFd, SPI_IOC_WR_MODE, &mode);
-    LOGD("iotcl mode=%x, nRet=%d", mode, nRet);
+//    LOGD("iotcl mode=%x, nRet=%d", mode, nRet);
 
 
     return nFd;
@@ -129,7 +129,7 @@ JNIEXPORT jint JNICALL Java_com_friendlyarm_FriendlyThings_HardwareController_op
 JNIEXPORT void JNICALL Java_com_friendlyarm_FriendlyThings_HardwareController_close
   (JNIEnv *env, jclass thiz, jint fd)
 {
-    LOGD("spi close : nFd=%d", fd);
+//    LOGD("spi close : nFd=%d", fd);
 
     close(fd);
 }
@@ -145,8 +145,8 @@ JNIEXPORT jint JNICALL Java_com_friendlyarm_FriendlyThings_HardwareController_SP
 {
     int i = 0;
     int nRet = 0;
-    unsigned char tx[16] = { 0,};
-    unsigned char rx[16] = { 0,};
+    unsigned char tx[128] = { 0,};
+    unsigned char rx[128] = { 0,};
     size_t len = (*env)->GetArrayLength(env, jtx);
 
     struct spi_ioc_transfer tr = {
@@ -161,7 +161,7 @@ JNIEXPORT jint JNICALL Java_com_friendlyarm_FriendlyThings_HardwareController_SP
 
     jbyte *nativeBytes = (*env)->GetByteArrayElements(env, jtx, 0);
 
-    LOGD("fd=%d, delay=%d, speed=%d, bits=%d", fd, delay, speed, bits);
+//    LOGD("fd=%d, delay=%d, speed=%d, bits=%d", fd, delay, speed, bits);
 
     memcpy(tx, nativeBytes, len);
 //    for(i=0;i<len;i++) {
@@ -169,7 +169,7 @@ JNIEXPORT jint JNICALL Java_com_friendlyarm_FriendlyThings_HardwareController_SP
 //    }
 
     nRet = ioctl(fd, SPI_IOC_MESSAGE(1), &tr);
-    LOGD("iotcl tr, nRet=%d", nRet);
+//    LOGD("iotcl tr, nRet=%d", nRet);
 
 //    for(i=0;i<len;i++) {
 //        LOGD("rx[%d]=%x", i, rx[i]);
