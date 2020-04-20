@@ -164,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     if( mFd0 != NULL) {
                         mFileInputStream0 = new FileInputStream(mFd0);
                         mFileOutputStream0 = new FileOutputStream(mFd0);
-
+                        mReception0.setText("");
                         if( mReadingThread0 == null ) {
                             mReadingThread0 = new ReadingThread0();
                             mReadingThread0.start();
@@ -176,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     if( mFd1 != NULL) {
                         mFileInputStream1 = new FileInputStream(mFd1);
                         mFileOutputStream1 = new FileOutputStream(mFd1);
-
+                        mReception1.setText("");
                         if( mReadingThread1 == null ) {
                             mReadingThread1 = new ReadingThread1();
                             mReadingThread1.start();
@@ -192,11 +192,33 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             public void onClick(View v) {
                 if(mFd0 !=null ) {
                     mReadingThread0.interrupt();
+                    mReadingThread0 = null;
+                    try {
+                        mFileInputStream0.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        mFileOutputStream0.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     serialPort0.Close();
                     mFd0 = null;
                 }
                 if(mFd1 !=null ) {
                     mReadingThread1.interrupt();
+                    mReadingThread1 = null;
+                    try {
+                        mFileInputStream1.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        mFileOutputStream1.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     serialPort1.Close();
                     mFd1 = null;
                 }
