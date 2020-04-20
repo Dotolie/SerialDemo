@@ -326,9 +326,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 //			while (!isInterrupted()) {
                 try {
                     if (mFileOutputStream0 != null) {
-                        HardwareController.setGPIOValue(GPIOEnum.PIN_485_0_D, 1);
                         mFileOutputStream0.write(mWBuffer0);
-                        HardwareController.setGPIOValue(GPIOEnum.PIN_485_0_D, 0);
                     } else {
                         return;
                     }
@@ -346,9 +344,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 //			while (!isInterrupted()) {
             try {
                 if (mFileOutputStream1 != null) {
-                    HardwareController.setGPIOValue(GPIOEnum.PIN_485_1_D, 1);
                     mFileOutputStream1.write(mWBuffer1);
-                    HardwareController.setGPIOValue(GPIOEnum.PIN_485_1_D, 0);
                 } else {
                     return;
                 }
@@ -384,9 +380,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         runOnUiThread(new Runnable() {
             public void run() {
                 if (mReception0 != null) {
-                    //mReception.append(new String(buffer, 0, size));
-                    String sRecived = byteArrayToHex(buffer, size);
-                    mReception0.append( sRecived);
+                    mReception0.append(new String(buffer, 0, size));
+//                    String sRecived = byteArrayToHex(buffer, size);
+//                    mReception0.append( sRecived);
                 }
             }
         });
@@ -417,9 +413,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         runOnUiThread(new Runnable() {
             public void run() {
                 if (mReception1 != null) {
-                    //mReception.append(new String(buffer, 0, size));
-                    String sRecived = byteArrayToHex(buffer, size);
-                    mReception1.append( sRecived);
+                    mReception1.append(new String(buffer, 0, size));
+//                    String sRecived = byteArrayToHex(buffer, size);
+//                    mReception1.append( sRecived);
                 }
             }
         });
