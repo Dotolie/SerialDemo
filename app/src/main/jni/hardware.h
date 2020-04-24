@@ -50,6 +50,15 @@ JNIEXPORT jint JNICALL Java_com_friendlyarm_FriendlyThings_HardwareController_SP
   (JNIEnv *, jclass, jint, jbyteArray, jbyteArray, jint, jint, jint);
 
 
+
+/*
+ * Class:     nativehelper_NativeGpio
+ * Method:    readGpio
+ * Signature: (Ljava/lang/String;Lnativehelper/NativeGpio/GpioInterruptCallback;)V
+ */
+JNIEXPORT void JNICALL Java_com_friendlyarm_FriendlyThings_HardwareController_readGpio
+        (JNIEnv *env, jclass cls, jstring path, jobject callback);
+
 #ifdef __cplusplus
 }
 #endif

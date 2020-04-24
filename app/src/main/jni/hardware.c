@@ -13,6 +13,10 @@
 #include <errno.h>
 #include <stdio.h>
 #include <jni.h>
+#include <poll.h>
+
+
+#include <pthread.h>
 #include "hardware.h"
 #include "android/log.h"
 
@@ -23,7 +27,10 @@
 #define LOGE(fmt, args...) __android_log_print(ANDROID_LOG_ERROR, TAG, fmt, ##args)
 
 static const char *TAG="Hardware";
-
+static jmethodID cb_method_id;
+static jclass cb_class;
+static jobject cb_object;
+static JNIEnv *cb_save_env;
 
 static const char *pGpios[9] = {
     "/sys/devices/platform/pinctrl/gpio/gpio35/value",
@@ -180,3 +187,96 @@ JNIEXPORT jint JNICALL Java_com_friendlyarm_FriendlyThings_HardwareController_SP
 
     return len;
 }
+
+
+
+int read_gpio( void (*callback)(int))
+{
+    char buf[11];
+    int res = 0;
+    int fd = open(pGpios[1], O_RDONLY);
+
+    if(fd == -1)
+    {
+        LOGE("error opening file");
+        return -1;
+    }
+//    LOGD("%s interrupt received gpio.c, val: %d", pGpios[1], fd);
+
+    struct pollfd gpio_poll_fd = {
+            .fd = fd,
+            .events = POLLPRI,
+            .revents = 0
+    };
+
+    read(fd, &buf[0], 10*sizeof(char));
+    for(;;)
+    {
+        LOGD("start   POLLPRI");
+
+        res = poll(&gpio_poll_fd,1,-1);
+        if(res == -1)
+        {
+            LOGD("error polling");
+            break;
+        }
+
+        if((gpio_poll_fd.revents & POLLPRI)  == POLLPRI)
+        {
+            LOGD("bPOLLPRI");
+            int off = lseek(fd, 0, SEEK_SET);
+            if(off == -1){
+                LOGE("error offset_t lseek");
+                break;
+            }
+            memset(&buf[0], 0, 11);
+            size_t num = read(fd, &buf[0], 10*sizeof(char));
+
+            callback(atoi(buf));
+        }
+
+    }
+
+    LOGD("stop poll");
+    return 0;
+}
+
+
+
+static void on_new_value(int val)
+{
+    LOGD("on_new_value, val: %d", val);
+
+    (*cb_save_env)->CallVoidMethod(cb_save_env, cb_object, cb_method_id, (jint)val);
+}
+
+/*
+ * Class:     com_friendlyarm_FriendlyThings_HardwareController
+ * Method:    readGpio
+ * Signature: (Ljava/lang/String;Lnativehelper/NativeGpio/GpioInterruptCallback;)V
+ */
+JNIEXPORT void JNICALL Java_com_friendlyarm_FriendlyThings_HardwareController_getSpiInt
+        (JNIEnv *env, jclass cls, jobject callback)
+{
+    cb_class = (*env)->GetObjectClass(env, callback);
+
+    if(cb_class == NULL){
+        LOGD("callback interface not found");
+        return;
+    }
+
+    cb_method_id = (*env)->GetMethodID(env, cb_class, "onNewValue", "(I)V");
+
+    if(cb_method_id == NULL){
+        LOGE("could not find callback method");
+        return;
+    }
+
+    cb_object = callback;
+    cb_save_env = env;
+
+
+    read_gpio( on_new_value);
+
+}
+

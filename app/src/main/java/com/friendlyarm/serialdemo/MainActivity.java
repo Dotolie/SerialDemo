@@ -94,6 +94,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HardwareController.getSpiInt(spi_callback);
+            }
+        });
+        t.start();
+
         mSendText0 = findViewById(R.id.edt_send_ch0);
         mReception0 = findViewById(R.id.tv_receive_ch0);
         mSendText1 = findViewById(R.id.edt_send_ch1);
@@ -101,6 +110,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         mTvReceiveSpi = findViewById(R.id.tv_receive_spi );
         mEtSendSpi = findViewById(R.id.edt_send_spi);
+
 
         mBtOpenSpi = findViewById(R.id.bt_open_spi);
         mBtOpenSpi.setOnClickListener(new View.OnClickListener() {
@@ -442,4 +452,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
         });
     }
+
+
+    HardwareController.InterruptCallback spi_callback = new HardwareController.InterruptCallback() {
+        @Override
+        public void onNewValue(int value) {
+            mTvReceiveSpi.append("spiInt="+value + " ");
+        }
+    };
+
 }
