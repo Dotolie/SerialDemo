@@ -18,7 +18,7 @@ public class SPI {
     private int spi_fd = -1;
 
     public void begin() {
-        if( spi_fd > -1)
+        if( spi_fd != -1)
             return;
 
         spi_fd = HardwareController.open();
@@ -26,13 +26,14 @@ public class SPI {
             Log.d(TAG, "open " +  "ok!");
         } else {
             Log.d(TAG, "open " + "failed!");
-            spi_fd = -1;
         }
+
     }
 
     public void end() {
         if (spi_fd != -1) {
             HardwareController.close(spi_fd);
+            Log.d(TAG, "close " +  "ok!");
             spi_fd = -1;
         }
     }

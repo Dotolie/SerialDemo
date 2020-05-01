@@ -31,6 +31,8 @@ static jmethodID cb_method_id;
 static jclass cb_class;
 static jobject cb_object;
 static JNIEnv *cb_save_env;
+static int g_fd = -1;
+static int g_run = 0;
 
 static const char *pGpios[9] = {
     "/sys/devices/platform/pinctrl/gpio/gpio35/value",
@@ -124,7 +126,19 @@ JNIEXPORT jint JNICALL Java_com_friendlyarm_FriendlyThings_HardwareController_op
     nRet = ioctl(nFd, SPI_IOC_WR_MODE, &mode);
 //    LOGD("iotcl mode=%x, nRet=%d", mode, nRet);
 
-
+    g_fd = open(pGpios[1], O_RDONLY);
+    if(g_fd == -1)
+    {
+        LOGE("error opening fail for spi_int:%s", pGpios[1]);
+        return -1;
+    }
+    else
+    {
+        char buf[11];
+        g_run = 1;
+        read(g_fd, buf, 10*sizeof(char));
+//        LOGE("spi_int: gpio open g_fd=%d", g_fd);
+    }
     return nFd;
 }
 
@@ -136,6 +150,13 @@ JNIEXPORT jint JNICALL Java_com_friendlyarm_FriendlyThings_HardwareController_op
 JNIEXPORT void JNICALL Java_com_friendlyarm_FriendlyThings_HardwareController_close
   (JNIEnv *env, jclass thiz, jint fd)
 {
+    if( g_fd > -1 )
+    {
+        close(g_fd);
+//        LOGE("close spi_int : g_fd=%d", g_fd);
+        g_fd = -1;
+    }
+    g_run = 0;
 //    LOGD("spi close : nFd=%d", fd);
 
     close(fd);
@@ -194,50 +215,44 @@ int read_gpio( void (*callback)(int))
 {
     char buf[11];
     int res = 0;
-    int fd = open(pGpios[1], O_RDONLY);
 
-    if(fd == -1)
-    {
-        LOGE("error opening file");
-        return -1;
-    }
 //    LOGD("%s interrupt received gpio.c, val: %d", pGpios[1], fd);
 
     struct pollfd gpio_poll_fd = {
-            .fd = fd,
+            .fd = g_fd,
             .events = POLLPRI,
             .revents = 0
     };
 
-    read(fd, &buf[0], 10*sizeof(char));
-    for(;;)
-    {
-        LOGD("start   POLLPRI");
 
-        res = poll(&gpio_poll_fd,1,-1);
+    while(g_run)
+    {
+//        LOGD("start   POLLPRI");
+
+        res = poll(&gpio_poll_fd,1,1);
         if(res == -1)
         {
-            LOGD("error polling");
+            LOGE("error polling");
             break;
         }
 
         if((gpio_poll_fd.revents & POLLPRI)  == POLLPRI)
         {
-            LOGD("bPOLLPRI");
-            int off = lseek(fd, 0, SEEK_SET);
+//            LOGD("bPOLLPRI");
+            int off = lseek(g_fd, 0, SEEK_SET);
             if(off == -1){
                 LOGE("error offset_t lseek");
                 break;
             }
             memset(&buf[0], 0, 11);
-            size_t num = read(fd, &buf[0], 10*sizeof(char));
+            size_t num = read(g_fd, buf, 10*sizeof(char));
 
             callback(atoi(buf));
         }
 
     }
 
-    LOGD("stop poll");
+//    LOGD("stop poll");
     return 0;
 }
 
@@ -245,7 +260,7 @@ int read_gpio( void (*callback)(int))
 
 static void on_new_value(int val)
 {
-    LOGD("on_new_value, val: %d", val);
+//    LOGD("on_new_value, val: %d", val);
 
     (*cb_save_env)->CallVoidMethod(cb_save_env, cb_object, cb_method_id, (jint)val);
 }
@@ -261,7 +276,7 @@ JNIEXPORT void JNICALL Java_com_friendlyarm_FriendlyThings_HardwareController_ge
     cb_class = (*env)->GetObjectClass(env, callback);
 
     if(cb_class == NULL){
-        LOGD("callback interface not found");
+        LOGE("callback interface not found");
         return;
     }
 

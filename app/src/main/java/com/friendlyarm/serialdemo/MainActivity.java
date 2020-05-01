@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private FileOutputStream mFileOutputStream1;
 
     private SPI spi = new SPI();
-
+    private InterruptThread mInterruptThread;
 
     //serial sending thread
     private SendingThread0 mSendingThread0;
@@ -95,14 +95,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         setContentView(R.layout.activity_main);
 
 
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                HardwareController.getSpiInt(spi_callback);
-            }
-        });
-        t.start();
-
         mSendText0 = findViewById(R.id.edt_send_ch0);
         mReception0 = findViewById(R.id.tv_receive_ch0);
         mSendText1 = findViewById(R.id.edt_send_ch1);
@@ -117,6 +109,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             @Override
             public void onClick(View v) {
                 spi.begin();
+                if( mInterruptThread == null ) {
+                    Toast.makeText(MainActivity.this, "create InterruptThread", Toast.LENGTH_SHORT ).show();
+                    mInterruptThread = new InterruptThread();
+                    mInterruptThread.start();
+                }
                 mEtSendSpi.setText("");
                 mTvReceiveSpi.setText("");
             }
@@ -161,6 +158,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         mBtCloseSpi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if( mInterruptThread != null ) {
+                    mInterruptThread.interrupt();
+                    mInterruptThread = null;
+                }
                 spi.end();
             }
         });
@@ -453,6 +454,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         });
     }
 
+    private class InterruptThread extends Thread {
+        @Override
+        public void run() {
+            super.run();
+            while(!isInterrupted()) {
+                HardwareController.getSpiInt(spi_callback);
+            }
+        }
+    }
 
     HardwareController.InterruptCallback spi_callback = new HardwareController.InterruptCallback() {
         @Override
